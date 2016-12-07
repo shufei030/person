@@ -1,0 +1,7 @@
+div{text-align:center} 
+/*line-height:100%设置文字div中上下居中*/
+.s_foot{ height:40px; width:100%; line-height:100%; background:#9fa4ac; text-align:center; position:absolute; left:0; bottom:0;}
+.s_foot p{ color:#dedfe1;}
+.clear{ clear:both; height:0px; line-height:0px; font-size:0px;}
+.s_head{ width:100%; height:50px; color:#fff; background:#008cd6;}
+.s_head .s_s{  font-weight:700; text-align:center; padding- :10px;line-height:50px; float:left; font-size:24px;}
