@@ -1,104 +1,65 @@
 /**
  * This class is the main view for the application. It is specified in app.js as the
- * "mainView" property. That setting automatically applies the "viewport"
- * plugin causing this view to become the body element (i.e., the viewport).
+ * "autoCreateViewport" property. That setting automatically applies the "viewport"
+ * plugin to promote that instance of this class to the body element.
  *
  * TODO - Replace this content of this view to suite the needs of your application.
  */
 Ext.define('dm.view.main.Main', {
-    extend: 'Ext.tab.Panel',
-    xtype: 'app-main',
-
+    extend: 'Ext.container.Container',
     requires: [
-        'Ext.plugin.Viewport',
-        'Ext.window.MessageBox',
-
         'dm.view.main.MainController',
         'dm.view.main.MainModel',
-        'dm.view.main.List'
+        'dm.view.main.menu.MainMenuToolbar',
+        'dm.view.main.region.LeftMenu',
+        'dm.view.main.menu.MainMenuTree',
+        'dm.view.main.region.Center',
+        'Ext.ux.TabCloseMenu'
     ],
-
+    uses: ['dm.view.main.region.Top','dm.view.main.region.Bottom'],
+    xtype: 'app-main',
+    //MVVM架构的控制器的名称，会在当前路径中根据‘Main’ + Controller 来确定文件名
     controller: 'main',
-    viewModel: 'main',
-
-    ui: 'navigation',
-
-    tabBarHeaderPosition: 1,
-    titleRotation: 0,
-    tabRotation: 0,
-
-    header: {
-        layout: {
-            align: 'stretchmax'
-        },
-        title: {
-            bind: {
-                text: '{name}'
-            },
-            flex: 0
-        },
-        iconCls: 'fa-th-list'
+    //MVVM架构的viewModel的类型，会在当前路径中根据‘Main’ + Model 来确定文件名  
+    viewModel: {
+        type: 'main'
     },
 
-    tabBar: {
-        flex: 1,
-        layout: {
-            align: 'stretch',
-            overflowHandler: 'none'
-        }
-    },
-
-    responsiveConfig: {
-        tall: {
-            headerPosition: 'top'
-        },
-        wide: {
-            headerPosition: 'left'
-        }
-    },
-
-    defaults: {
-        bodyPadding: 20,
-        tabConfig: {
-            plugins: 'responsive',
-            responsiveConfig: {
-                wide: {
-                    iconAlign: 'left',
-                    textAlign: 'left'
-                },
-                tall: {
-                    iconAlign: 'top',
-                    textAlign: 'center',
-                    width: 120
-                }
-            }
-        }
+    layout: {
+        type: 'border'  //系统的主页面的布局  
     },
 
     items: [{
-        title: 'Home',
-        iconCls: 'fa-home',
-        // The following grid shares a store with the classic version's grid as well!
-        items: [{
-            xtype: 'mainlist'
-        }]
-    }, {
-        title: 'Users',
-        iconCls: 'fa-user',
-        bind: {
-            html: '{loremIpsum}'
+    	xtype : 'maintop',
+    	region: 'north'   	
+	    },{
+		xtype:'mainmenutoolbar',
+		region:'north',
+		hidden : true,
+		bind:{
+			hidden:'{!isToolbarMenu}'
+		}
+    	},{
+	    xtype : 'mainbottom',
+	    region: 'south'	
+	    },{
+        xtype:'LeftMenu',
+        region: 'west',
+        width: 180,
+        split:true,
+        hidden : true,
+        bind:{
+        	hidden:'{!isAccordionMenu}'
+         }
         }
-    }, {
-        title: 'Groups',
-        iconCls: 'fa-users',
-        bind: {
-            html: '{loremIpsum}'
-        }
-    }, {
-        title: 'Settings',
-        iconCls: 'fa-cog',
-        bind: {
-            html: '{loremIpsum}'
-        }
-    }]
+    ,{
+        region: 'center',
+        xtype: 'MainCenter'
+    }],
+    
+     initComponent : function() {  
+     	//此处设置后才能用glyph图标
+	    Ext.setGlyphFontFamily('FontAwesome'); 
+	    this.callParent();  
+	}
 });

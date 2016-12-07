@@ -1,0 +1,30 @@
+Ext.define('dm.dm.menuSetting.model.MenuSettingLeftTree', {
+	extend: 'Ext.data.Model',
+	fields: [
+	            {name:'id'          ,type:'int'},
+				{name:'parentId'    },
+				{name:'mod_type'    ,	defaultValue:'app'},
+				{name:'mod_code'    },
+				{name:'text'        }, 
+				{name:'textCls'     },
+				{name:'expanded'    ,type:'boolean'},
+				{name:'leaf'        ,type:'boolean'},
+				{name:'isvalid'     ,type:'boolean'},
+				{name:'urltype'		},
+				{name:'url'         },
+				{name:'urltarget'   },
+				{name:'icon'        },
+				{name:'iconCls'     },
+				{name:'qtip'        },
+				{name:'qtitle'      },
+				{name:'order_seq'   ,   type:'int'},
+				{name:'remark'      },
+				{name:'create_date' ,   type:'date',	dateFormat: 'Y-m-d H:i:s'},
+				{name:'modify_date' ,   type:'date',	dateFormat: 'Y-m-d H:i:s'},
+				{name:'ctrller'},
+				{name:'jsview'},
+				{name:'extraCfg'},
+//				{name:'softSet',	defaultValue:[]},
+				{name:'module',	defaultValue:[]}
+	        ]
+});
