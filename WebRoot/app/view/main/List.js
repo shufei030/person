@@ -4,7 +4,7 @@
 Ext.define('dm.view.main.List', {
     extend: 'Ext.grid.Panel',
     xtype: 'mainlist',
-
+    ui : 'highlight-framed',
     requires: [
         'dm.store.Personnel'
     ],
