@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dm.menuSetting.data.MenuSettingTreeMapper">
+<sql id="ModuleColumns">
+        parentid ,
+        mod_type,
+        mod_code,
+        text,
+        textCls,
+        expanded,
+        leaf,
+        isvalid,
+        urltype,
+        iconCls,
+        order_seq,
+        create_date,
+        modify_date,
+        ctrller,
+        jsview,
+        show_type
+  </sql>
+<sql id="selColumns">
+        id,
+        parentid parentId,
+        mod_type,
+        mod_code,
+        text,
+        textCls,
+        expanded,
+        leaf,
+        isvalid,
+        urltype,
+        iconCls,
+        jsview,
+        order_seq,
+        create_date,
+        modify_date,
+        ctrller,
+        show_type
+  </sql>
+  <sql id="valueColumns">
+        #{parentId},
+        #{mod_type},
+        #{mod_code},
+        #{text},
+        #{textCls},
+        #{expanded},
+        #{leaf},
+        #{isvalid},
+        #{urltype},
+        #{iconCls},
+        #{order_seq},
+        #{create_date},
+        #{modify_date},
+        #{ctrller},
+        #{jsview},
+        #{show_type}
+  </sql>
+<select id="getModuleWithParent" parameterType="map" resultType="Module">
+	select <include refid="selColumns" /> from lol_sys_model
+	<where>
+		1=1
+		<if test="node!=null">
+	          and parentid = #{node} 
+	        </if>
+            <if test="leaf =='true'"> 
+            or id = #{node}
+            </if>
+             <if test="u_id != null">
+             and id in(
+                select a.mod_id 
+                from t_user_module a 
+                <where>
+                    a.u_id = #{u_id}
+                    <if test="ou_id != null">
+                        and a.ou_id = #{ou_id}
+                    </if>
+                </where>
+                union 
+                select a.model_id as mod_id
+                from t_user_role_model a,t_user_role_ref b 
+                <where>
+                    a.role_id=b.role_id
+                    and b.u_id=#{u_id}
+                    <if test="ou_id != null">
+                        and b.ou_id = #{ou_id}
+                    </if>
+                </where> 
+                )
+            </if> 
+            <if test="mod_type!=null">
+            and mod_type=#{mod_type}
+            </if>
+            and isvalid='true'
+	</where>
+	order by order_seq
+</select>
+<insert id="addModule" parameterType="Module" keyProperty="id" useGeneratedKeys="true">
+        insert into lol_sys_model(<include refid="ModuleColumns"/>)
+        values(<include refid="valueColumns" />)
+  </insert>
+
+  <update id="updateModule" parameterType="Module">
+        update lol_sys_model set 
+            parentid=#{parentId},
+            mod_type=#{mod_type},
+            mod_code=#{mod_code},
+            text=#{text},
+            textCls=#{textCls},
+            expanded=#{expanded},
+            leaf=#{leaf},
+            isvalid=#{isvalid},
+            urltype=#{urltype},
+            iconCls=#{iconCls},
+            order_seq=#{order_seq},
+            create_date=#{create_date},
+            modify_date=#{modify_date},
+            ctrller=#{ctrller},
+	        show_type=#{show_type}
+        where id =#{id}
+  </update>
+  <delete id="deleteModule" parameterType="Module">
+        delete from lol_sys_model where id =#{id} 
+  </delete>
+  <select id="getCountByPId" parameterType="map" resultType="int">
+  	select count(*) from lol_sys_model where lol_sys_model.parentid = #{node}
+  </select>
+</mapper>

@@ -1,0 +1,10 @@
+@include extjs-panel-ui(
+    $ui: 'highlight-framed',
+    $ui-header-background-color: #5E5E5E,
+    $ui-border-color: #5E5E5E,
+    $ui-header-border-color: #5E5E5E,
+    $ui-body-border-color: #5E5E5E,
+    $ui-border-width: 2px,
+    $ui-border-radius: 2px,
+    $ui-header-color: white
+);
