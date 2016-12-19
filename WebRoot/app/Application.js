@@ -14,6 +14,7 @@ Ext.define('dm.Application', {
     
     launch: function () {
         // TODO - Launch the application
+    	dm.Application = this;
     },
 
     onAppUpdate: function () {
