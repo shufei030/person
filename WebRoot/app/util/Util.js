@@ -60,6 +60,27 @@ Ext.define('dm.util.Util',{
 			        hello = '夜里好';
 			    }
 			    return hello + ' ! ';
+		},
+		
+		getFormatText:function(type,v){
+			switch(type){
+				case dm.Const.SEX_TYPE :
+					if(v=='1'){
+						return '男';
+					}else if(v=='0'){
+						return '女';
+					}else{
+						return '人妖';
+					}
+				break;
+				case dm.Const.YESNO_TYPE :
+					if(v=='1'){
+						return '有效';
+					}else{
+						return '无效';
+					}
+				break;
+			}
 		}
 },function(){
     dm.Util = dm.util.Util= new this();
