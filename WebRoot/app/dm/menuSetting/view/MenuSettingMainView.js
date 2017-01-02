@@ -10,7 +10,7 @@ Ext.define('dm.dm.menuSetting.view.MenuSettingMainView',{
 			items: [{
 		    	//左边菜单菜单树
 				title: '功能菜单树',
-		        region:'west',
+				region:'west',
 		        width: 200,
 		        tools:[
 			           {type:'refresh',tooltip:'刷新'}
