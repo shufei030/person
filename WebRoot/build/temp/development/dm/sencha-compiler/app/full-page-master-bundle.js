@@ -1,2 +1,2 @@
 // @tag full-page
-// @require /Users/shufei/Documents/workspace/ehr/WebRoot/app.js
+// @require D:\git1\person\WebRoot\app.js

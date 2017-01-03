@@ -2,10 +2,13 @@ Ext.define('dm.dm.users.controller.UserInfoCtrl', {
 	extend: 'Ext.app.Controller',
 	requires:['dm.dm.users.store.UserInfo'],
 	views:  [
-			   'dm.dm.users.view.UserInfoManager'
+			   'dm.dm.users.view.UserInfoManager',
+			   'dm.dm.users.view.UserInfoEditor',
+			   'dm.dm.users.view.CurUserForm'
 	         ],
 	refs:[
-	      {ref:'usergrid',selector:'mng_UserInfo #userinfo_grid'}
+	      {ref:'usergrid',selector:'mng_UserInfo #userinfo_grid'},
+	      {ref:'userinfo_editor',selector:'userinfo_editor'}
 	],
 	
 	init: function() {
@@ -31,6 +34,10 @@ Ext.define('dm.dm.users.controller.UserInfoCtrl', {
             'mng_UserInfo button': {
             	//响应用户清单表界面上所有按钮点击事件
                 click: me.onBtnClick
+            },
+            'userinfo_editor button' : {
+            	clock: me.onDoEditClick
+            	//响应用户编辑界面上所有按钮点击事件
             }
         });
 		
@@ -39,6 +46,42 @@ Ext.define('dm.dm.users.controller.UserInfoCtrl', {
 	
 	onLaunch: function(){
 		//这个函数将在viewport被创建以后执行,准确时间是appliction.launch 执行以后
+	},
+	onDoEditClick : function(btn){
+		var me=this;
+		var win = me.getUserinfo_editor();
+		var form = win.down('#userinfo_form');
+		switch(btn.action){
+			case 'ACT_SAVE':
+				if(form.getForm().isValid()&&form.getForm().isDirty){
+					var rec = form.getRecord();
+					form.updateRecord(rec);
+					if(form.store.indexOf(rec)<0){
+						rec.set('pwd',dm.Const.MD5(rec.get('pwd')));
+						form.store.add(rec);
+						form.store.sync({
+						success:function(e,batch){
+						var newUser=batch.operations.create[0];
+						form.loadRecord(newUser);
+						/*userctr.currentUser=newUser;
+						userctr.SaveCtrs(newUser.get('u_id'));*/
+						form.store.sort();
+                        /*form.modeChange();*/
+						Ext.Msg.alert('提示','保存成功!');
+					},
+					failure:function(batch,options){
+                        Ext.Msg.alert('提示','保存失败!');
+                    }
+    			    });
+					}else{
+				    	this.uStore.sync();
+        				userctr.SaveCtrs();
+        				this.uStore.sort();
+        				Ext.Msg.alert('提示','保存成功!');
+					}
+				}
+			break;
+		}
 	},
 	onChgUserPwd: function(btn,event){
 		var win = btn.up('edt_ChgUserPwd');
@@ -98,19 +141,19 @@ Ext.define('dm.dm.users.controller.UserInfoCtrl', {
 		var me = this;
 //		if(!btn.up('mng_UserInfo').modFuncsDisabled[btn.itemId])
 			switch(btn.itemId){
-				case erp.Const.FUNC_ITEMID_BTN_ADD:
+				case dm.Const.FUNC_ITEMID_BTN_ADD:
 	    			me.doAddUser();
 	    			break;
-				case erp.Const.FUNC_ITEMID_BTN_EDT:
+				case dm.Const.FUNC_ITEMID_BTN_EDT:
 					me.doEditUser(true);
 					break;
-				case erp.Const.FUNC_ITEMID_BTN_DEL:
+				case dm.Const.FUNC_ITEMID_BTN_DEL:
 					me.doDelUser();
 					break;
-	    		case erp.Const.FUNC_ITEMID_BTN_REFRESH:
+	    		case dm.Const.FUNC_ITEMID_BTN_REFRESH:
 		    		this.uStore.load();
 		    		break;
-	    		case erp.Const.FUNC_ITEMID_BTN_RESET:
+	    		case dm.Const.FUNC_ITEMID_BTN_RESET:
 	    			this.doResetPwd();
 		    		break;
 		    	case 'accountsMapping':

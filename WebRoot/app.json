@@ -65,9 +65,11 @@
      *      ]
      */
     "requires": [
-        "font-awesome"
+        "font-awesome",
+        "locale",
+        "ux"
     ],
-
+	"locale" : "zh_CN",
     /**
      * Fashion build configuration properties.
      */
@@ -214,6 +216,7 @@
      *      }
      *
      */
+     // 各个js文件的加载设置
     "js": [
         {
             "path": "${framework.dir}/build/ext-all-rtl-debug.js"
@@ -221,7 +224,9 @@
         {
             "path": "app.js",
             "bundle": true
-        }
+        },{
+			"path" : "app/ux/Renderer.js"
+		}
     ],
 
     

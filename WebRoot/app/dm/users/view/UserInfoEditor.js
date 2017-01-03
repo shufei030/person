@@ -1,8 +1,8 @@
 Ext.define('dm.dm.users.view.UserInfoEditor',{
-	extend:'Ext.ux.Window',
+	extend:'Ext.window.Window',
     alias:'widget.userinfo_editor',
-    requires:['dm.dm.users.view.UserInfoForm',
-              'dm.dm.users.view.BaseUserCtr'
+    requires:['dm.dm.users.view.CurUserForm'/*,
+              'dm.dm.users.view.BaseUserCtr'*/
               ],
               
     iconCls:'user_comment',
@@ -44,13 +44,14 @@ Ext.define('dm.dm.users.view.UserInfoEditor',{
     	   items:[
     	   {
         	 	xtype:'userinfo_form',
+        	 	itemId:'userinfo_form',
         	 	isEdit:me.isEdit,
         	 	isAddNew:me.isAddNew,
         	 	store:me.store,
         	 	flex:1
     	   }
     	   ]
-    	 },
+    	 }/*,
     	 {  
     	 	xtype:'user_ctr',
     	 	isEdit:me.isEdit,
@@ -59,12 +60,12 @@ Ext.define('dm.dm.users.view.UserInfoEditor',{
     	 	isAddNew:me.isAddNew,
     	 	currentUser:me.currentUser,
     	 	flex:1
-    	 }
+    	 }*/
     	 ]
     	});
     	me.callParent(arguments);
     	me.loadRecord(me.currentUser);
-    	me.down('userinfo_form').promise=me.down('user_ctr').createPromise(me.createSavePromise());
+//    	me.down('userinfo_form').promise=me.down('user_ctr').createPromise(me.createSavePromise());
     },
     /**
      * 构建执行队列
@@ -72,11 +73,11 @@ Ext.define('dm.dm.users.view.UserInfoEditor',{
      */
     createSavePromise:function(){
     	var me=this;
-    	var promise=me.promise=new erp.DataUtil.Promise();
+    	var promise=me.promise=new dm.DataUtil.Promise();
     	var form=me.down('userinfo_form');
     	var ctr=me.down('user_ctr');	
     	return promise.then(function(){
-    	    var returnPromise=new erp.DataUtil.Promise();
+    	    var returnPromise=new dm.DataUtil.Promise();
     	    if(form.getForm().isValid()&&form.getForm().isDirty()){
     	    	var rec=form.getRecord();
     	    	form.getForm().updateRecord(rec);

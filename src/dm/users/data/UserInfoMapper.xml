@@ -66,7 +66,6 @@
 <update id="updateUserInfo" parameterType="dm.users.model.UserInfo">
 	update lol_user_info
 		set
-			user_id = #{user_id},
 			login_id = #{login_id},
 			pwd = #{pwd},
 			name = #{name},
@@ -86,4 +85,29 @@
 	delete from lol_user_info
 	where  user_id = #{user_id}
 </delete>
+
+<select id="getUserCount" parameterType="map" resultType="int">
+	select count(*)
+        from lol_user_info
+        <where>
+            <if test="login_id != null">
+                login_id =#{login_id}
+            </if>
+            <if test="u_type != null">
+                and u_type =#{u_type}
+            </if>
+            <if test="login_type != null">
+                and login_type =#{login_type}
+            </if>
+            <if test="name != null">
+                and name like #{name}
+            </if>
+            <if test="pwd != null">
+                and pwd=#{pwd}
+            </if>
+            <if test="is_valid != null">
+                and is_valid=#{is_valid}
+            </if>
+        </where>
+</select>
 </mapper>

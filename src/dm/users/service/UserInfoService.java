@@ -33,4 +33,17 @@ public class UserInfoService {
 			mapper.deleteUserInfo(obj);
 		}
 	}
+	/**
+	 * 
+	* @Title: isExistsUser
+	* @Description: 判断用户登录id是否存在
+	* @param paramsMap
+	* @return
+	* @returnType boolean    
+	* @author 舒飞
+	* @date 2017-1-3上午18:18:31
+	 */
+	public boolean isExistsUser(Map<String, Object> paramsMap) {
+		return mapper.getUserCount(paramsMap)>0;
+	}
 }

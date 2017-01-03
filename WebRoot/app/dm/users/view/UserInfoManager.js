@@ -71,7 +71,7 @@ Ext.define('dm.dm.users.view.UserInfoManager' , {
 					  columns:[
 					           //Ext.create(m 'Ext.grid.RowNumberer',{header:'',width:35}),
 					           {header:'',xtype:'rownumberer',width:35},
-					           {header: '用户ID',dataIndex: 'user_id',flex: 1},
+					           {header: '登录ID',dataIndex: 'login_id',flex: 1},
 					           {header: '姓名',dataIndex: 'name',flex: 1},
 					           {header: '性别',dataIndex: 'sex',flex: 1,renderer:function(v){
 									return dm.Util.getFormatText(dm.Const.SEX_TYPE,v);

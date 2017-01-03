@@ -10,4 +10,5 @@ public interface UserInfoMapper {
 	public void addUserInfo(UserInfo obj);
 	public void updateUserInfo(UserInfo obj);
 	public void deleteUserInfo(UserInfo obj);
+	public int getUserCount(Map<String,Object> params);
 }
