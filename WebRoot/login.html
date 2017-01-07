@@ -7,8 +7,11 @@ http-equiv="X-UA-Compatible">
 <TITLE>供应商管理系统</TITLE> 
 <!-- 1、图标文件名必须是favicon.ico    2、favicon.ico文件必须放到网站的根目录下    3、favicon.ico文件大小为16*16 -->
 <link rel="shortcut icon" href="images/logo.ico" />
-<SCRIPT src="js/jquery-1.9.1.min.js" type="text/javascript"></SCRIPT>
- 
+<link href="/newresources/css/xcConfirm.css" rel="stylesheet">
+<SCRIPT src="/js/jquery-1.9.1.min.js" type="text/javascript"></SCRIPT>
+<script src="/js/xcConfirm.js" type="text/javascript" ></script> 
+<script src="/js/md5.js" type="text/javascript"></script>
+<script src="/js/base.js" type="text/javascript"></script>
 <STYLE>
 body{
 	background: #ebebeb;
@@ -141,6 +144,13 @@ a{
 </STYLE>
      
 <SCRIPT type="text/javascript">
+var loginAccount_flag=false;
+var pwd_flag=false;
+var vcode_flag=true;
+var errorNum = 0;//输入账号密码的错误次数
+var ipCheckWay = 1;//ip异常验证方式  //发送类型  1：手机  2：邮箱
+var regPhone = null;//用户绑定的手机
+var regEmail = null;//用户绑定的邮箱
 $(function(){
 	//得到焦点
 	$("#password").focus(function(){
@@ -170,38 +180,120 @@ $(function(){
 		$("#right_hand").attr("style","right:-112px;top:-12px");
 	});
 	$("#login").click(function(){
-		if($("#username").val()==""){
-			jAlert('请输入名字');         
-            return false;   
+		if(!loginAccount_flag&&$("#username").val()==""){
+			$("#username").focus();     
+            /* return false;   */ 
+		}else if(!pwd_flag&&$("#password").val()==""){
+			$("#password").focus();   
+			/* document.write("请输入密码");               
+            return false;    */
+		}else if(!vcode_flag){
+			$("#data_vcode").focus();
+		}else{
+			var username = $("#username").val();
+			var password = $("#password").val();
+			var vCode = $("#vcode").val();
+			var isLogin = 0;//未记住账号
+			var url = "userInfo/doLogin.act";
+			var params = {};
+			params.username=username;//用户名或邮箱
+			params.password=hex_md5(password);
+			params.vCode=vCode;
+			params.errorNum=errorNum;
+			params.isLogin=isLogin;
+			
+			var isasync = true;//异步请求
+			var fn = function(result){
+				$("body #spin_wrap").remove();
+				if(result.ajaxErrorCode!=200){
+					$(".reg-explain").css("display","block");
+					$(".reg-explain").html("发生错误，代码："+result.ajaxErrorCode);
+					getNewVCode();
+				}else{
+					if(result.loginName==""||typeof (result.loginName)=="undefined"||result.loginName==null){
+						if(result.emailValid == "false"){//邮箱未验证直接跳转到验证页面
+						regIdAndEmail = "regId=" + result.regId + "&email=" + result.regEmail;//跨域传输数据
+						var param ={"regIdAndEmail":regIdAndEmail};
+						addParamsToWindowName(param);
+						go_redirect("userInfo/emailValid.htm");
+					}
+					
+					if(typeof (result.phone)!="undefined" && result.phone != null){//默认为手机验证IP
+						regPhone = result.phone;
+						$("#sendInfoTip").html("您绑定的手机为：");
+						$("#sendInfo").html(result.phone);
+						$("#sendedTipMessage").html("验证码已成功发送至绑定手机上，请查收");
+						$(".reg-explain").html("");
+						
+						if(typeof (result.email)!="undefined" && result.email != null){$("#changeSendWay").html("更换为邮箱验证"); regEmail = result.email;}
+						$(".invalidIpTip").fadeIn("fast");
+						ipCheckWay = 1;
+						return;
+					}else if(typeof (result.email)!="undefined" && result.email != null){//邮箱验证IP
+						$("#sendInfoTip").html("您绑定的邮箱为：");
+						$("#sendInfo").html(result.email);
+						$("#sendedTipMessage").html("验证码已成功发送至指定邮箱上，请查收");
+						$(".reg-explain").html("");
+						
+						if(typeof (result.phone)!="undefined" && result.phone != null){$("#changeSendWay").html("更换为邮箱验证");}
+						$(".invalidIpTip").fadeIn("fast");
+						ipCheckWay = 2;
+						return;
+					}
+					
+					errorNum ++;
+					$(".reg-explain").css("display","block");
+					$(".reg-explain").html("<img src='/newresources/images/er.png'>"+result.message);
+					if(errorNum >= 2){//mishengliang 在第二次错误之后显示出验证码校验框 2016-03-04
+						$(".login_wrap").css({height:370});
+						$("#vCode_change").css({display:'block'});
+						$("#vCodeImg1").attr("src","common/getVerifyCode.do");
+					}
+					return;
+				  }else if(result.emailValid == "true"){
+					var redirect=getQueryString("redirect");
+					if(isNullOrEmptyOrUndefined(redirect)){
+						redirect="index.jsp";
+					}else{
+						redirect=decodeURIComponent(redirect);
+					}
+					//delCookie("isVip");
+					setCookie("isVip",false,1);//cookie 设置当前是否为vip登录
+					go_redirect(redirect);
+				}
+				}
+			};
+			asyncAjaxMethod(url,params,isasync,fn);
 		}
-		if($("#password").val()==""){
-			document.write("请输入密码");               
-            return false;   
-		}
-		$.ajax({
+		/* $.ajax({
 			type: "GET",
 			url:"test.txt",
 			dataType:"json",
 			success:function(data){
 				if($("#username").val()==data[0].username && $("#password").val()==data[0].password){
-					window.location.href="index.html"
+					window.location.href="index.html";
 				}else{
-					alert('用户名或密码不正确！')
+					alert('用户名或密码不正确！');
 				}
 			}
-		});
+		}); */
 	 } );
-	//点击Enter键触发doLogin登录  mishengliang 2016-04-19
+	//点击Enter键触发doLogin登录 
 	$(function () {
 	    $("input").keyup(function (event){
 	    	if (event.keyCode == "13") {
 	            $("#login").click();   
 	            return;
 	        }
-
 	    });
-
 	});  
+	//获取新的验证码
+	function getNewVCode(num){
+		var vcode_img=$("#vCodeImg"+num);
+		if(vcode_img){
+			vcode_img.attr("src","common/getVerifyCode.act?_dc="+new Date().getTime());
+		}
+	}
 });
 </SCRIPT>
  <!-- 指示文件是用什么软件生成的 ，一般由软件自动生成。具体MSHTML 11.00.9600.17496是什么软件标识不清楚，看样子是微软的一个什么东西。 -->
@@ -221,8 +313,15 @@ $(function(){
 
 <P style="position: relative;"><SPAN class="p_logo"></SPAN>         
 <INPUT class="ipt" id="password" type="password" placeholder="请输入密码" value="">   
- </P>
- 
+</P>
+<div class="logininner_wrap mt20 clearfix" style="display:none" id="vCode_change">
+	<input class="input_vcode"  id="data_vcode" >
+	<a class="vcodeImg_wrap" href="javascript:void(0)" title="如看不清楚,请点击图片更换" onclick="getNewVCode(1);">
+	   <img src="/common/getVerifyCode.do" id="vCodeImg1">
+	   <img src="/newresources/images/new/refresh.png">
+    </a>
+</div>
+<div class="reg-explain mt10 mb10" style="display:block"></div>
  <DIV style="height: 50px; line-height: 50px; margin-top: 30px; border-top-color: rgb(231, 231, 231); border-top-width: 1px; border-top-style: solid;">
   <P style="margin: 0px 35px 20px 45px;">
      <SPAN style="float: left;">
