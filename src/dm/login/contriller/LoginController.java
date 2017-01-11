@@ -14,14 +14,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import util.SessionUtil;
-import util.VerifyCodeUtils;
+import dm.util.SessionUtil;
+import dm.util.VerifyCodeUtils;
+
 
 @Controller
 @RequestMapping("login")
 public class LoginController {
 	
-	@RequestMapping(value="/getVerifyCode.do",method=RequestMethod.GET)
+	@RequestMapping(value="/getVerifyCode.act",method=RequestMethod.GET)
 	public void getVerifyCode(HttpServletRequest request,HttpServletResponse response) throws Exception{
 		//设置浏览器不缓存本页
 		response.setHeader("Pragma", "No-cache");  
@@ -34,7 +35,7 @@ public class LoginController {
 		
 		//输出验证码给客户端
 		//生成图片  
-        int w = 97, h = 42;  
+        int w = 90, h = 37;  
 		VerifyCodeUtils.outputImage(w, h, response.getOutputStream(), verifyCode); 
 	}	
 
