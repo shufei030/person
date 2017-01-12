@@ -1,0 +1,6 @@
+基于Spring的AOP简单实现
+注意一下，在讲解之前，说明一点：使用Spring AOP，要成功运行起代码，只用Spring提供给开发者的jar包是不够的，
+请额外上网下载两个jar包：
+1、aopalliance.jar
+2、aspectjweaver.jar
+开始讲解用Spring AOP的XML实现方式，先定义一个接口：
